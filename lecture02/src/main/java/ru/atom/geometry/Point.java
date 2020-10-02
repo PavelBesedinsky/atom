@@ -4,12 +4,20 @@ package ru.atom.geometry;
  * Template class for
  */
 public class Point implements Collider /* super class and interfaces here if necessary */ {
-    private int x;
-    private int y;
+    private final int x;
+    private final int y;
 
     public Point(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+
+    public int getX() {
+        return this.x;
+    }
+
+    public int getY() {
+        return this.y;
     }
     /**
      * @param o - other object to check equality with
