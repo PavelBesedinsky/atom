@@ -1,10 +1,11 @@
-package game_engine;
+package game;
 
 import application.Application;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
+import java.awt.FileDialog;
+import java.awt.Frame;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;

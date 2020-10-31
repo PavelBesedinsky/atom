@@ -1,7 +1,7 @@
 package application;
 
-import game_engine.GameEngine;
-import game_engine.GameException;
+import game.GameEngine;
+import game.GameException;
 
 import java.util.Scanner;
 

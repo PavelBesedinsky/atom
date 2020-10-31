@@ -1,6 +1,4 @@
-package game_engine;
-
-import java.util.ArrayList;
+package game;
 
 public interface IGameEngine {
     void start() throws GameException;

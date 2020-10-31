@@ -1,4 +1,4 @@
-package game_engine;
+package game;
 
 import application.Application;
 import org.slf4j.LoggerFactory;
