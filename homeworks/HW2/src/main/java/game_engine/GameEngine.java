@@ -16,23 +16,6 @@ public class GameEngine implements IGameEngine {
 
     private ArrayList<String> dictionary;
 
-    public GameEngine() {
-        FileDialog dialog = new FileDialog((Frame) null, "Select File to Open");
-        dialog.setMode(FileDialog.LOAD);
-        dialog.setVisible(true);
-        String fileName = dialog.getFile();
-
-        try (Scanner scanner = new Scanner(new File(fileName))) {
-            ArrayList<String> dictionary = new ArrayList<>();
-            do {
-                dictionary.add(scanner.next());
-            } while (scanner.hasNext());
-            this.dictionary = dictionary;
-        } catch (FileNotFoundException e) {
-            log.error(e.getMessage());
-        }
-    }
-
     private void play(ArrayList<String> dictionary) {
         String randomWord = getRandomWordFromDictionary(dictionary);
         int match = 0;
@@ -68,6 +51,22 @@ public class GameEngine implements IGameEngine {
     @Override
     public void start() throws GameException {
         if (this.dictionary.size() == 0) throw new GameException("Ошибка");
+
+        FileDialog dialog = new FileDialog((Frame) null, "Select File to Open");
+        dialog.setMode(FileDialog.LOAD);
+        dialog.setVisible(true);
+        String fileName = dialog.getFile();
+
+        try (Scanner scanner = new Scanner(new File(fileName))) {
+            ArrayList<String> dictionary = new ArrayList<>();
+            do {
+                dictionary.add(scanner.next());
+            } while (scanner.hasNext());
+            this.dictionary = dictionary;
+        } catch (FileNotFoundException e) {
+            log.error(e.getMessage());
+        }
+
         play(this.dictionary);
     }
 
