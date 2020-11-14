@@ -129,9 +129,10 @@ public class ChatController {
             messages.add(message);
             return ResponseEntity.badRequest().body(message);
         } else {
-            String responseBody = usersBanned.put(name, name);
-            messages.add("[" + name + "] was banned");
-            return ResponseEntity.ok(Objects.requireNonNull(responseBody));
+            usersBanned.put(name, name);
+            usersOnline.remove(name, name);
+            messages.add(name + " was banned");
+            return ResponseEntity.ok().build();
         }
     }
 
@@ -152,9 +153,9 @@ public class ChatController {
             messages.add(message);
             return ResponseEntity.badRequest().body(message);
         } else {
-            String responseBody = usersBanned.put(name, name);
-            messages.add("[" + name + "] was banned");
-            return ResponseEntity.ok(Objects.requireNonNull(responseBody));
+            usersBanned.remove(name);
+            messages.add(name + " was unbanned");
+            return ResponseEntity.ok().build();
         }
     }
 
@@ -163,7 +164,7 @@ public class ChatController {
      */
     @GetMapping(
             path = "clear",
-            consumes = MediaType.TEXT_PLAIN_VALUE
+            produces = MediaType.TEXT_PLAIN_VALUE
     )
     public ResponseEntity clear() {
         messages.clear();
