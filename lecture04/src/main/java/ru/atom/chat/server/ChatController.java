@@ -148,10 +148,6 @@ public class ChatController {
         if (!usersBanned.containsKey(name)) {
             String message = "user [" + name + "] wasn't banned";
             return ResponseEntity.badRequest().body(message);
-        } else if (!usersOnline.containsKey(name)) {
-            String message = "user [" + name + "] not found";
-            messages.add(message);
-            return ResponseEntity.badRequest().body(message);
         } else {
             usersBanned.remove(name);
             messages.add(name + " was unbanned");
