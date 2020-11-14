@@ -1,0 +1,10 @@
+#swagger
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: /api-docs
+server:
+  servlet:
+    context-path: /api
+  port: 8080
