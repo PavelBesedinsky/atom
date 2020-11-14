@@ -4,12 +4,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -20,9 +18,10 @@ import java.util.stream.Collectors;
 public class ChatController {
     private Queue<String> messages = new ConcurrentLinkedQueue<>();
     private Map<String, String> usersOnline = new ConcurrentHashMap<>();
+    private Map<String, String> usersBanned = new ConcurrentHashMap<>();
 
     /**
-     * curl -X POST -i localhost:8080/chat/login -d "name=I_AM_STUPID"
+     * curl -X POST -i localhost:8080/api/chat/login -d "name=I_AM_STUPID"
      */
     @RequestMapping(
             path = "login",
@@ -39,36 +38,136 @@ public class ChatController {
         if (usersOnline.containsKey(name)) {
             return ResponseEntity.badRequest().body("Already logged in:(");
         }
+        if (usersBanned.containsKey(name)) {
+            String message = "user [" + name + "] got ban";
+            return ResponseEntity.badRequest().body(message);
+        }
         usersOnline.put(name, name);
         messages.add("[" + name + "] logged in");
         return ResponseEntity.ok().build();
     }
 
     /**
-     * curl -i localhost:8080/chat/online
+     * curl -i localhost:8080/api/chat/online
      */
     @RequestMapping(
             path = "online",
             method = RequestMethod.GET,
             produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity online() {
-        String responseBody = String.join("\n", usersOnline.keySet().stream().sorted().collect(Collectors.toList()));
+        String responseBody = usersOnline.keySet().stream().sorted().collect(Collectors.joining("\n"));
         return ResponseEntity.ok(responseBody);
     }
 
     /**
-     * curl -X POST -i localhost:8080/chat/logout -d "name=I_AM_STUPID"
+     * curl -X POST -i localhost:8080/api/chat/logout -d "name=I_AM_STUPID"
      */
-    //TODO
+    @PostMapping(
+            path = "logout",
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE
+    )
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity logout(@RequestParam("name") String name) {
+        if (usersOnline.containsKey(name)) {
+            String responseBody = usersOnline.remove(name);
+            messages.add("[" + name + "] logged out");
+            return ResponseEntity.ok(responseBody);
+        } else {
+            String message = "user [" + name + "] not found";
+            messages.add(message);
+            return ResponseEntity.badRequest().body(message);
+        }
+    }
 
     /**
-     * curl -X POST -i localhost:8080/chat/say -d "name=I_AM_STUPID&msg=Hello everyone in this chat"
+     * curl -X POST -i localhost:8080/api/chat/say -d "name=I_AM_STUPID&msg=Hello everyone in this chat"
      */
-    //TODO
+    @PostMapping(
+            path = "say",
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE
+    )
+    public ResponseEntity say(@RequestParam("name") String name, @RequestParam("msg") String msg) {
+        if (usersBanned.containsKey(name)) {
+            String message = "user [" + name + "] got ban";
+            return ResponseEntity.badRequest().body(message);
+        } else if (!usersOnline.containsKey(name)) {
+            String message = "user [" + name + "] not found";
+            return ResponseEntity.badRequest().body(message);
+        } else {
+            messages.add("[" + name + "]: " + msg);
+            return ResponseEntity.ok().body("[" + name + "]: " + msg);
+        }
+    }
 
 
     /**
-     * curl -i localhost:8080/chat/chat
+     * curl -i localhost:8080/api/chat/chat
      */
-    //TODO
+    @GetMapping(
+            path = "chat",
+            produces = MediaType.TEXT_PLAIN_VALUE
+    )
+    public ResponseEntity chat() {
+        String responseBody = String.join("\n", messages);
+        return ResponseEntity.ok(responseBody);
+    }
+
+    /**
+     * curl -X POST -i localhost:8080/api/chat/ban -d "name=I_AM_STUPID"
+     */
+    @PostMapping(
+            path = "ban",
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE
+    )
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity ban(@RequestParam("name") String name) {
+        if (usersBanned.containsKey(name)) {
+            String message = "user [" + name + "] already banned";
+            return ResponseEntity.badRequest().body(message);
+        } else if (!usersOnline.containsKey(name)) {
+            String message = "user [" + name + "] not found";
+            messages.add(message);
+            return ResponseEntity.badRequest().body(message);
+        } else {
+            String responseBody = usersBanned.put(name, name);
+            messages.add("[" + name + "] was banned");
+            return ResponseEntity.ok(Objects.requireNonNull(responseBody));
+        }
+    }
+
+    /**
+     * curl -X POST -i localhost:8080/api/chat/ban -d "name=I_AM_STUPID"
+     */
+    @PostMapping(
+            path = "unban",
+            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE
+    )
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity unban(@RequestParam("name") String name) {
+        if (!usersBanned.containsKey(name)) {
+            String message = "user [" + name + "] wasn't banned";
+            return ResponseEntity.badRequest().body(message);
+        } else if (!usersOnline.containsKey(name)) {
+            String message = "user [" + name + "] not found";
+            messages.add(message);
+            return ResponseEntity.badRequest().body(message);
+        } else {
+            String responseBody = usersBanned.put(name, name);
+            messages.add("[" + name + "] was banned");
+            return ResponseEntity.ok(Objects.requireNonNull(responseBody));
+        }
+    }
+
+    /**
+     * curl -i localhost:8080/api/chat/chat
+     */
+    @GetMapping(
+            path = "clear",
+            consumes = MediaType.TEXT_PLAIN_VALUE
+    )
+    public ResponseEntity clear() {
+        messages.clear();
+        String responseBody = "Чат пуст";
+        return ResponseEntity.ok(responseBody);
+    }
 }
