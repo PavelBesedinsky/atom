@@ -4,7 +4,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.Map;
 import java.util.Queue;
@@ -22,10 +26,7 @@ public class ChatController {
     /**
      * curl -X POST -i localhost:8080/api/chat/login -d "name=I_AM_STUPID"
      */
-    @RequestMapping(
-            path = "login",
-            method = RequestMethod.POST,
-            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+    @PostMapping(path = "login", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> login(@RequestParam("name") String name) {
         if (name.length() < 1) {
@@ -49,10 +50,7 @@ public class ChatController {
     /**
      * curl -i localhost:8080/api/chat/online
      */
-    @RequestMapping(
-            path = "online",
-            method = RequestMethod.GET,
-            produces = MediaType.TEXT_PLAIN_VALUE)
+    @GetMapping(path = "online", produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> online() {
         String responseBody = usersOnline.keySet().stream().sorted().collect(Collectors.joining("\n"));
         return ResponseEntity.ok(responseBody);
@@ -61,10 +59,7 @@ public class ChatController {
     /**
      * curl -X POST -i localhost:8080/api/chat/logout -d "name=I_AM_STUPID"
      */
-    @PostMapping(
-            path = "logout",
-            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE
-    )
+    @PostMapping(path = "logout", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> logout(@RequestParam("name") String name) {
         if (usersOnline.containsKey(name)) {
@@ -81,10 +76,7 @@ public class ChatController {
     /**
      * curl -X POST -i localhost:8080/api/chat/say -d "name=I_AM_STUPID&msg=Hello everyone in this chat"
      */
-    @PostMapping(
-            path = "say",
-            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE
-    )
+    @PostMapping(path = "say", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> say(@RequestParam("name") String name, @RequestParam("msg") String msg) {
         if (usersBanned.containsKey(name)) {
             String message = "user [" + name + "] got ban";
@@ -114,10 +106,7 @@ public class ChatController {
     /**
      * curl -X POST -i localhost:8080/api/chat/ban -d "name=I_AM_STUPID"
      */
-    @PostMapping(
-            path = "ban",
-            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE
-    )
+    @PostMapping(path = "ban", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> ban(@RequestParam("name") String name) {
         if (usersBanned.containsKey(name)) {
@@ -138,10 +127,7 @@ public class ChatController {
     /**
      * curl -X POST -i localhost:8080/api/chat/ban -d "name=I_AM_STUPID"
      */
-    @PostMapping(
-            path = "unban",
-            consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE
-    )
+    @PostMapping(path = "unban", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<String> unban(@RequestParam("name") String name) {
         if (!usersBanned.containsKey(name)) {
@@ -157,10 +143,7 @@ public class ChatController {
     /**
      * curl -i localhost:8080/api/chat/chat
      */
-    @GetMapping(
-            path = "clear",
-            produces = MediaType.TEXT_PLAIN_VALUE
-    )
+    @GetMapping(path = "clear", produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> clear() {
         messages.clear();
         String responseBody = "Чат пуст";
