@@ -1,85 +1,40 @@
-<head>
-    <link rel="stylesheet" type="text/css" href="styles.css">
-</head>
 <html>
+<head>
+    <link href="styles.css" rel="stylesheet" type="text/css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="main.js"></script>
+</head>
 <body>
 <div id="header">
-    <form method="POST" id="nameform" action="javascript:void(null);" onsubmit="login()">
-        <input id="name" name="name" value="" style="font-size:medium" type="text">
-        <input value="Login" style="font-size:large" type="submit">
-    </form>
+    <div class="main" align="justify">
+        <form action="javascript:void(null);" id="signUpForm" method="POST" onsubmit="signUp()">
+            <input id="signUpName" name="name" placeholder="Username" required style="font-size:medium" value="">
+            <input autocomplete="off" id="signUpPassword" name="password" placeholder="Password" required
+                   style="font-size:medium" type="password" value="">
+            <input style="font-size:large" type="submit" value="Sign Up">
+        </form>
+        <div class="placeholder"></div>
+        <div class="row">
+            <form action="javascript:void(null);" id="loginForm" method="POST" onsubmit="login()">
+                <input id="loginName" name="name" placeholder="Username" required style="font-size:medium" value="">
+                <input autocomplete="off" id="loginPassword" name="password" placeholder="Password" required
+                       style="font-size:medium" type="password" value="">
+                <input id="buttonLogin" style="font-size:large" type="submit" value="Login">
+            </form>
+            <input id="buttonLogout" onclick="logout()" style="font-size:large; height: 27px; margin-left: 50px"
+                   type="button" value="Logout" disabled>
+        </div>
+    </div>
 </div>
 <div id="body">
-    <div id="history" class="chat form"></div>
+    <div class="chat form" id="history"></div>
 </div>
 <div id="footer">
-    <form method="POST" id="msgform" action="javascript:void(null);" onsubmit="say()">
-        <input id="msg" name="msg" class="msginput" value="" style="font-size:medium" type="text">
-        <input value="Send" class="sendbutton" style="font-size:large" type="submit">
+    <form action="javascript:void(null);" id="msgForm" method="POST" onsubmit="say()">
+        <input class="msginput" id="msg" name="msg" style="font-size:medium" type="text" value="">
+        <input class="sendbutton" style="font-size:large" type="submit" value="Send">
     </form>
 </div>
 </body>
 </html>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script>
-    var host = "localhost";
-    var port = 8080;
-
-
-    function loadHistory() {
-        var settings = {
-            "crossDomain": true,
-            "url": "http://" + host + ":" + port + "/chat/chat",
-            "method": "GET",
-        }
-
-        $.ajax(settings).done(function (response) {
-            $("#history").html(response.replace(/\n/g, "<br />"))
-            $("#history").scrollTop($("#history")[0].scrollHeight);
-        }).fail(function (jqXHR, textStatus) {
-            console.log(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
-        });
-    }
-
-    function say() {
-        var msg = $('#msgform').serialize();
-        var name = $('#nameform').serialize();
-
-        var settings = {
-            "method": "POST",
-            "crossDomain": true,
-            "url": "http://" + host + ":" + port + "/chat/say",
-            "data": name + "&" + msg
-        };
-
-        $.ajax(settings).done(function (response) {
-            $('#msgform').trigger("reset");
-            loadHistory();
-        }).fail(function (jqXHR, textStatus) {
-            alert(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
-            console.log(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
-        });
-    }
-
-    function login() {
-        var name = $('#nameform').serialize();
-
-        var settings = {
-            "method": "POST",
-            "crossDomain": true,
-            "url": "http://" + host + ":" + port + "/chat/login",
-            "data": name
-        };
-
-        $.ajax(settings).done(function (response) {
-            loadHistory();
-        }).fail(function (jqXHR, textStatus) {
-            alert(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
-            console.log(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
-        });
-    }
-
-    loadHistory();
-    setInterval(loadHistory, 10000);
-</script>
