@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -161,12 +163,15 @@ public class ChatController {
     public ResponseEntity<String> say(@RequestParam("name") String name,
                                       @RequestParam("password") String password,
                                       @RequestParam("msg") String msg) {
+        Date date = new Date();
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+
         if (!usersOnline.containsKey(name)) {
             return ResponseEntity.badRequest().body("User logged out.");
         }
 
         if (getSha256(password).equals(usersOnline.get(name))) {
-            messages.add("[" + name + "]: " + msg);
+            messages.add("[" + name + " - " + df.format(date) + "]: " + msg);
         } else {
             return ResponseEntity.badRequest().body("Wrong password.");
         }
