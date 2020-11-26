@@ -15,10 +15,24 @@ var host = "localhost";
             "url": "http://" + host + ":" + port + "/chat/chat",
             "method": "GET",
         }
-
         $.ajax(settings).done(function (response) {
             $("#history").html(response.replace(/\n/g, "<br />"));
             $("#history").scrollTop($("#history")[0].scrollHeight);
+
+            let textHtml = $('#history');
+            let textToStrs;
+            for(let i = 0; i < textHtml.length; i++) {
+                let text = $(textHtml[i]).html();
+                textToStrs = text.toString().split('<br>');
+                let names = [];
+                for (let s of textToStrs) {
+                    let words = s.split(']');
+                    names.push(words[0].slice(1));
+                }
+                textToStrs = textToStrs.map((s, i) => s.replace(names[i], '<span style="color:red">' + names[i] + '</span>'));
+            }
+            let result = textToStrs.join('<br>');
+            $('#history').html(result);
         }).fail(function (jqXHR, textStatus) {
             console.log(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);
         });
