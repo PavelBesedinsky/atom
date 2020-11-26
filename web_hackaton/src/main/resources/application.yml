@@ -1,0 +1,26 @@
+#Swagger
+springfox:
+  documentation:
+    swagger:
+      v2:
+        path: /api-docs
+
+#server:
+#  servlet:
+#    context-path: /api
+#  port: 8080
+#
+#spring:
+#  flyway:
+#    baselineOnMigrate: true
+#    check-location: true
+#    locations:
+#      classpath: db/migration
+#    schemas: public
+#    enabled: true
+#app:
+#  datasource:
+#    jdbc-url: jdbc:postgresql://localhost:5433/demodb
+#    username: postgres
+#    password: test
+#    pool-size: 30
