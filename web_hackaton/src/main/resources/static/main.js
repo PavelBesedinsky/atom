@@ -53,6 +53,7 @@ function say() {
 
     $.ajax(settings).done(function (response) {
         $('#msgform').trigger("reset");
+        document.getElementById("msg").value = "";
         loadHistory();
     }).fail(function (jqXHR, textStatus) {
         alert(jqXHR.status + " " + jqXHR.statusText + ". " + jqXHR.responseText);

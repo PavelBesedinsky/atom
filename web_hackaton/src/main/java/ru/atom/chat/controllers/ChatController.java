@@ -166,6 +166,10 @@ public class ChatController {
         Date date = new Date();
         SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
 
+        if (msg == null || msg == "") {
+            return ResponseEntity.badRequest().body("Message is empty!");
+        }
+
         if (!usersOnline.containsKey(name)) {
             return ResponseEntity.badRequest().body("User logged out.");
         }
