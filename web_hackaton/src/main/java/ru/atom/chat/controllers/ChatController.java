@@ -2,15 +2,16 @@ package ru.atom.chat.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
+import ru.atom.chat.entity.User;
+import ru.atom.chat.service.UserService;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,6 +26,22 @@ public class ChatController {
     private Queue<String> messages = new ConcurrentLinkedQueue<>();
     private Map<String, String> usersOnline = new ConcurrentHashMap<>();
 
+    @Autowired
+    private UserService userService;
+
+    @GetMapping("/users")
+    public ResponseEntity<String> getUsers() {
+
+        Iterable<User> users = userService.findAll();
+
+        return ResponseEntity.ok(users.toString());
+    }
+
+    @PostMapping("/user")
+    public ResponseEntity<String> addUser(User user) {
+        userService.createUser(user);
+        return ResponseEntity.ok(user.toString());
+    }
     /**
      * curl -X POST -i localhost:8080/chat/login -d "name=I_AM_STUPID"
      */
