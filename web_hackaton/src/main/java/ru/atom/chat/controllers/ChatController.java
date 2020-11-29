@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.atom.chat.entity.User;
 import ru.atom.chat.service.UserService;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;

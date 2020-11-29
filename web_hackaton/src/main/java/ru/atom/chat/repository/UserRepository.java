@@ -1,4 +1,4 @@
-package ru.atom.chat.repository;//package ru.atom.chat.repository.user;
+package ru.atom.chat.repository;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

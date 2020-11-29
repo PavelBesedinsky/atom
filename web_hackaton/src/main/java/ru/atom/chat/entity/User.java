@@ -1,5 +1,4 @@
-package ru.atom.chat.entity;//package ru.atom.chat.entity.user;
-
+package ru.atom.chat.entity;
 
 import javax.persistence.*;
 import java.util.UUID;
@@ -8,7 +7,7 @@ import java.util.UUID;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @Column
