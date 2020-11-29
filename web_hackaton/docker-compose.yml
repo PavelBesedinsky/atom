@@ -1,34 +1,35 @@
-version: '3.1'
+version: '3'
 services:
   back:
     container_name: back_container
     restart: always
     image: lab4:test
     ports:
-      - "8080:8080"
+      - 8080:8080
     depends_on:
       - db
-    links:
-      - "db:db_container"
   db:
     container_name: db_container
     image: postgres:11
-#    restart: unless-stopped
+    restart: unless-stopped
     ports:
-      - "5432:5432"
+      - 5432:5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=test
       - POSTGRES_DB=testdb
+      - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
       - pgdata:/var/lib/postgresql/data
   pgadmin:
     container_name: pgadmin_container
     image: dpage/pgadmin4
-#    restart: unless-stopped
+    restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
       PGADMIN_DEFAULT_PASSWORD: pgadmin
+    depends_on:
+      - db
     volumes:
       - ./pgadmin_data:/root/.pgadmin
     ports:
