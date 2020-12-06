@@ -26,8 +26,8 @@ services:
     image: dpage/pgadmin4
     restart: unless-stopped
     environment:
-      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
-      PGADMIN_DEFAULT_PASSWORD: pgadmin
+      PGADMIN_DEFAULT_EMAIL: postgres@pg.com
+      PGADMIN_DEFAULT_PASSWORD: postgres1
     depends_on:
       - db
     volumes:

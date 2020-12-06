@@ -1,28 +1,33 @@
-package ru.atom.chat.entity;
+package ru.atom.chat.entity.user;
 
 import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users")
+@Table(name="Users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     private UUID id;
 
-    @Column
     private String name;
-
-    @Column
     private String password;
+    private boolean online;
 
     public User() {
     }
 
-    public User(UUID uuid, String name, String password) {
-        this.id = uuid;
+    public User(String name, String password, boolean online) {
         this.name = name;
         this.password = password;
+        this.online = online;
+    }
+
+    public User(UUID id, String name, String password, boolean online) {
+        this.id = id;
+        this.name = name;
+        this.password = password;
+        this.online = online;
     }
 
     public UUID getId() {
@@ -49,12 +54,11 @@ public class User {
         this.password = password;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "uuid=" + id +
-                ", name='" + name + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+    public boolean getOnline() {
+        return online;
+    }
+
+    public void setOnline(boolean online) {
+        this.online = online;
     }
 }
