@@ -7,11 +7,15 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import ru.atom.chat.entity.message.Message;
 import ru.atom.chat.entity.user.User;
 import ru.atom.chat.modelDto.LoginDto;
+import ru.atom.chat.modelDto.MessageDto;
 import ru.atom.chat.modelDto.UserDto;
+import ru.atom.chat.service.message.MessageService;
 import ru.atom.chat.service.user.UserService;
 
+import java.util.List;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -39,6 +43,27 @@ public class ChatController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private MessageService messageService;
+
+    @PostMapping("/message")
+    public ResponseEntity<String> sendMessage(@RequestBody MessageDto messageDto) {
+        final Optional<User> optionalUser = userService.findById(messageDto.getId());
+        if(optionalUser.isPresent()) {
+            Message message = new Message(messageDto.getMessage(), optionalUser.get());
+            messageService.createMessage(message);
+            return new ResponseEntity<String>(message.getId().toString(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<String>("Пользователь не найден", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/messages")
+    public ResponseEntity<List<Message>> getMessages() {
+        List<Message> messages = messageService.getAllMessages();
+        return new ResponseEntity<>(messages, HttpStatus.OK);
+    }
+
     @GetMapping("/users")
     public ResponseEntity<Iterable<UserDto>> getUsers() {
         Iterable<UserDto> users = userService.findAll();
@@ -53,7 +78,7 @@ public class ChatController {
             if (user.getPassword().equals(loginDto.getPassword())) {
                 final User onlineUser = new User(user.getId(), user.getName(), user.getPassword(), true);
                 userService.updateUser(onlineUser);
-                return new ResponseEntity<>(loginDto.toString(), HttpStatus.OK);
+                return new ResponseEntity<>(user.getId().toString(), HttpStatus.OK);
             }
             else {
                 return new ResponseEntity<>("Неправильный пароль", HttpStatus.FORBIDDEN);
@@ -61,7 +86,7 @@ public class ChatController {
         } else {
             final User createdUser = new User(loginDto.getName(), loginDto.getPassword(), true);
             userService.createUser(createdUser);
-            return new ResponseEntity<String>(loginDto.toString(), HttpStatus.OK);
+            return new ResponseEntity<String>(createdUser.getId().toString(), HttpStatus.OK);
         }
     }
 

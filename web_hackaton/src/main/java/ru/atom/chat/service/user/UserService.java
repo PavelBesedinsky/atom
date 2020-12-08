@@ -27,7 +27,7 @@ public class UserService {
 
     public Iterable<UserDto> findAll() {
         final List<User> users = (List<User>) userRepository.findAll();
-        return users.stream().map((user) -> new UserDto(user.getName(), user.getOnline())).collect(Collectors.toList());
+        return users.stream().map((user) -> new UserDto(user.getName(), user.isOnline())).collect(Collectors.toList());
     }
 
     public Optional<User> findById(UUID id) {
