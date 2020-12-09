@@ -11,10 +11,13 @@ import ru.atom.chat.entity.message.Message;
 import ru.atom.chat.entity.user.User;
 import ru.atom.chat.modelDto.LoginDto;
 import ru.atom.chat.modelDto.MessageDto;
+import ru.atom.chat.modelDto.MessageOutputDto;
 import ru.atom.chat.modelDto.UserDto;
 import ru.atom.chat.service.message.MessageService;
 import ru.atom.chat.service.user.UserService;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.math.BigInteger;
 import java.security.MessageDigest;
@@ -50,7 +53,7 @@ public class ChatController {
     public ResponseEntity<String> sendMessage(@RequestBody MessageDto messageDto) {
         final Optional<User> optionalUser = userService.findById(messageDto.getId());
         if(optionalUser.isPresent()) {
-            Message message = new Message(messageDto.getMessage(), optionalUser.get());
+            Message message = new Message(messageDto.getMessage(), Instant.now(), optionalUser.get());
             messageService.createMessage(message);
             return new ResponseEntity<String>(message.getId().toString(), HttpStatus.OK);
         } else {
@@ -59,8 +62,14 @@ public class ChatController {
     }
 
     @GetMapping("/messages")
-    public ResponseEntity<List<Message>> getMessages() {
-        List<Message> messages = messageService.getAllMessages();
+    public ResponseEntity<List<MessageOutputDto>> getMessages() {
+        List<MessageOutputDto> messages = messageService.getAllMessages()
+                .stream().map(message ->
+                        new MessageOutputDto(
+                                message.getUser().getName(),
+                                message.getMessage(),
+                                message.getInstant()
+                        )).collect(Collectors.toList());
         return new ResponseEntity<>(messages, HttpStatus.OK);
     }
 

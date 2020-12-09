@@ -1,8 +1,12 @@
 package ru.atom.chat.entity.message;
 
+import jdk.nashorn.internal.objects.annotations.Getter;
+import jdk.nashorn.internal.objects.annotations.Setter;
 import ru.atom.chat.entity.user.User;
 
 import javax.persistence.*;
+import java.time.Instant;
+
 import java.util.UUID;
 
 @Entity
@@ -12,7 +16,10 @@ public class Message {
     @GeneratedValue
     private UUID id;
 
+
     private String message;
+    private Instant instant;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -20,14 +27,21 @@ public class Message {
     public Message() {
     }
 
-    public Message(String message, User user) {
+    public Message(String message, Instant date) {
         this.message = message;
+        this.instant = date;
+    }
+
+    public Message(String message, Instant date, User user) {
+        this.message = message;
+        this.instant = date;
         this.user = user;
     }
 
-    public Message(UUID id, String message, User user) {
+    public Message(UUID id, String message, Instant date, User user) {
         this.id = id;
         this.message = message;
+        this.instant = date;
         this.user = user;
     }
 
@@ -45,6 +59,14 @@ public class Message {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public Instant getInstant() {
+        return instant;
+    }
+
+    public void setInstant(Instant instant) {
+        this.instant = instant;
     }
 
     public User getUser() {
