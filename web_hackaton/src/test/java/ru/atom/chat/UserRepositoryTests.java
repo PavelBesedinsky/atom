@@ -1,6 +1,7 @@
 package ru.atom.chat;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
+@Ignore
 public class UserRepositoryTests {
     @Autowired
     private UserRepository userRepository;
