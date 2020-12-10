@@ -3,13 +3,10 @@ package ru.atom.chat.service.user;//package ru.atom.chat.service.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.atom.chat.entity.user.User;
-import ru.atom.chat.modelDto.UserDto;
 import ru.atom.chat.repository.user.UserRepository;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -21,13 +18,12 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public void createUser(User user) {
-        userRepository.save(user);
+    public User createUser(User user) {
+        return userRepository.save(user);
     }
 
-    public Iterable<UserDto> findAll() {
-        final List<User> users = (List<User>) userRepository.findAll();
-        return users.stream().map((user) -> new UserDto(user.getId(), user.getName(), user.isOnline())).collect(Collectors.toList());
+    public Iterable<User> findAll() {
+        return userRepository.findAll();
     }
 
     public Optional<User> findById(UUID id) {

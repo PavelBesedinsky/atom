@@ -33,6 +33,13 @@ public class User {
         this.online = online;
     }
 
+    public User(String name, String password, boolean online, List<Message> messages) {
+        this.name = name;
+        this.password = password;
+        this.online = online;
+        this.messages = messages;
+    }
+
     public User(UUID id, String name, String password, boolean online) {
         this.id = id;
         this.name = name;

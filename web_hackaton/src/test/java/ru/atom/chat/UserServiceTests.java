@@ -1,40 +1,60 @@
 package ru.atom.chat;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import ru.atom.chat.entity.user.User;
-import ru.atom.chat.service.message.MessageService;
+import ru.atom.chat.repository.user.UserRepository;
 import ru.atom.chat.service.user.UserService;
 
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
-@Ignore
 public class UserServiceTests {
+    @Mock
+    private UserRepository mockUserRepository;
 
-    @Autowired
-    private UserService userService;
-    final User user = new User("name","password", true);
+    private UserService userServiceUnderTest;
 
     @Before
-    public void createUser() {
-        userService.createUser(user);
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+        userServiceUnderTest = new UserService(mockUserRepository);
+
+        User testUser = new User("user_1", "password", true);
+
+
+        Mockito.when(mockUserRepository.save(any()))
+                .thenReturn(testUser);
+
+        Mockito.when(mockUserRepository.findUserByName(anyString()))
+                .thenReturn(java.util.Optional.of(testUser));
     }
 
     @Test
-    public void testGetUserByIdFromDb() {
-        final Optional<User> user = userService.findById(this.user.getId());
-        assertTrue(user.isPresent());
-        user.ifPresent(value -> assertEquals(value.getId(), this.user.getId()));
-        user.ifPresent(value -> System.out.println("User: " + user.get().getName()));
+    public void testFindUserByName() {
+        final String userName = "user_1";
+        final Optional<User> result = userServiceUnderTest.findByName("user_1");
+        // Verify the results
+
+        if (result.isPresent()) {
+            assertEquals(userName, result.get().getName());
+        } else {
+            fail();
+        }
+    }
+
+    @Test
+    public void testCreateUser() {
+        User result = userServiceUnderTest.createUser(new User("user_1", "password", true));
+        // Verify the results
+        assertEquals("user_1", result.getName());
     }
 }

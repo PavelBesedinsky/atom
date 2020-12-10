@@ -1,35 +1,59 @@
 package ru.atom.chat;
 
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
 import ru.atom.chat.entity.message.Message;
+import ru.atom.chat.entity.user.User;
+import ru.atom.chat.repository.message.MessageRepository;
 import ru.atom.chat.service.message.MessageService;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertNotEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest
-@Ignore
 public class MessageServiceTests {
-    @Autowired
-    private MessageService messageService;
+    @Mock
+    private MessageRepository mockMessageRepository;
 
-    final Message message = new Message(
-            "message",
-            Instant.now()
-    );
+    private MessageService messageServiceServiceUnderTest;
+
+    private final User testUser1 = new User("user_1", "password", true);
+    private final Message testMessage1 = new Message("message_1", Instant.now(), testUser1);
+
+    private final User testUser2 = new User("user_2", "password", true);
+    private final Message testMessage2 = new Message("message_2", Instant.now(), testUser2);
+
+    @Before
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
+        messageServiceServiceUnderTest = new MessageService(mockMessageRepository);
+
+        Mockito.when(mockMessageRepository.save(any()))
+                .thenReturn(testMessage1);
+        Mockito.when(mockMessageRepository.findAll())
+                .thenReturn(Arrays.asList(testMessage1, testMessage2));
+    }
 
     @Test
-    public void testGetAllFromDb() {
-        messageService.createMessage(message);
-        List<Message> messages = messageService.getAllMessages();
-        assertNotEquals(messages.size(), 0);
+    public void testFindAllMessages() {
+        final List<Message> result = messageServiceServiceUnderTest.getAllMessages();
+        // Verify the results
+        assertThat(result.size() == 2);
+    }
+
+    @Test
+    public void testSaveMessage() {
+        Message result = messageServiceServiceUnderTest.createMessage(testMessage1);
+        // Verify the results
+        assertEquals(testMessage1.getMessage(), result.getMessage());
     }
 }
