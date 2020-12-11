@@ -36,6 +36,7 @@ deploy_latest:
     - master
     - dev
     - types
+    - lab4_besedinsky_bykov
   services:
     - docker:dind
   script:
