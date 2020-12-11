@@ -1,4 +1,4 @@
-package ru.atom.chat.service.user;//package ru.atom.chat.service.user;
+package ru.atom.chat.service.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

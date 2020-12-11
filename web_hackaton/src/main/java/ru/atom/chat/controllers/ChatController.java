@@ -18,9 +18,6 @@ import ru.atom.chat.modelDto.UserDto;
 import ru.atom.chat.service.message.MessageService;
 import ru.atom.chat.service.user.UserService;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -81,7 +78,7 @@ public class ChatController {
         } else {
             final User createdUser = new User(loginDto.getName(), loginDto.getPassword(), true);
             userService.createUser(createdUser);
-            return new ResponseEntity<String>(createdUser.getId().toString(), HttpStatus.OK);
+            return new ResponseEntity<>(createdUser.getId().toString(), HttpStatus.OK);
         }
     }
 
@@ -94,7 +91,7 @@ public class ChatController {
             userService.updateUser(offlineUser);
             return new ResponseEntity<>("Пользователь " + userName + " разлогинился", HttpStatus.OK);
         } else {
-            return new ResponseEntity<String>("Пользователь не найден", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Пользователь не найден", HttpStatus.NOT_FOUND);
         }
     }
 }
