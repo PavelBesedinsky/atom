@@ -1,0 +1,49 @@
+stages:
+  - build
+  - deploy
+
+build:
+  image: openjdk:8-alpine
+  stage: build
+  script:
+    - chmod +x ./gradlew
+    - ./gradlew build
+  artifacts:
+    when: always
+    paths:
+      - build/libs/*.jar
+      - build/test-results/test/TEST-*.xml
+
+deploy_tag:
+  image: docker:19.03.8
+  stage: deploy
+  only:
+    - tags
+  services:
+    - docker:dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker build --no-cache -t registry.gitlab.com/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_BUILD_TAG .
+    - docker push registry.gitlab.com/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:$CI_BUILD_TAG
+  tags:
+    - docker
+
+
+deploy_latest:
+  image: docker:19.03.8
+  stage: deploy
+  only:
+    - master
+    - dev
+    - types
+  services:
+    - docker:dind
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
+    - docker build --no-cache -t registry.gitlab.com/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:latest .
+    - docker push registry.gitlab.com/$CI_PROJECT_NAMESPACE/$CI_PROJECT_NAME:latest
+  tags:
+    - docker
+
+after_script:
+  - echo "End CI"
